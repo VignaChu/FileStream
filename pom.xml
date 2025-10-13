@@ -85,7 +85,7 @@
                             <goal>package</goal>
                         </goals>
                         <configuration>
-                            <mainClass>fun.vignachu.PicStream</mainClass>
+                            <mainClass>fun.vignachu.FileStream</mainClass>
                             <bundleJre>true</bundleJre>
                             <generateInstaller>true</generateInstaller>
                             <platform>windows</platform>
@@ -93,7 +93,7 @@
                             <version>1.0</version>
                             <!-- 指定 EXE 图标 -->
                             <winConfig>
-                                <icoFile>${project.basedir}/src/main/resources/icon.ico</icoFile>
+                                <icoFile>src/main/resources/images/FileStream.ico</icoFile>
                             </winConfig>
                         </configuration>
                     </execution>
