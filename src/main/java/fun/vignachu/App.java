@@ -46,7 +46,7 @@ public class App extends Application {
                 new Label("程序名称：FileStream"),
                 new Label("作者：VignaChu"),
                 new Label("版本：ver1.1.0"),
-                new Label("发布时间2025/10/15")));
+                new Label("发布时间2025/10/14")));
 
         tabPane.getTabs().addAll(FileTabSet(tab1, primaryStage), tab2);
         tabPane.setMinSize(1200, 800);
@@ -122,13 +122,11 @@ public class App extends Application {
         }
     }
 
-    // 【1. 优化删除按钮样式】
     class DelButton extends Button {
         private boolean isDelDir = false;
 
         public DelButton() {
             super("删除文件夹");
-            // 优化按钮样式：使用更现代的边框和颜色
             this.setStyle("-fx-border-color: #6a0dad; -fx-border-width: 1px; -fx-background-radius: 3px;");
             this.setOnAction(e -> toggleState());
         }
@@ -144,7 +142,7 @@ public class App extends Application {
         private void toggleState() {
             reverseActive();
             if (isDelDir) {
-                // 优化后的删除模式样式
+                // 删除模式样式
                 setText("点击文件夹按钮以删除");
                 setStyle("-fx-background-color:#eb2323; -fx-text-fill: white; -fx-border-color:#7f0303; -fx-border-width: 1px;");
             } else {
@@ -155,14 +153,14 @@ public class App extends Application {
         }
     }
 
-    public Tab FileTabSet(Tab tab, Stage stage) { // <--- 修改方法名
+    public Tab FileTabSet(Tab tab, Stage stage) {
         // 布局初始化
-        HBox FileTopPane = new HBox(10); // <--- 修改
+        HBox FileTopPane = new HBox(10);
         HBox DirTopPane = new HBox(10);
         HBox DirHandleTopPane = new HBox(10);
-        // HBox FileMainTopPane = new HBox(10); // <--- 移除或不再用于组合 CurrentFile 和 DelFile
+        // HBox FileMainTopPane = new HBox(10);
         VBox ClassifyDirListPane = new VBox(5);
-        VBox FileDisplayPane = new VBox(10); // <--- 修改
+        VBox FileDisplayPane = new VBox(10);
 
         // 主面板 (Center: FileMainPane, Right: DirMainPane)
         BorderPane MainPane = new BorderPane();
@@ -172,22 +170,22 @@ public class App extends Application {
         BorderPane DirHandlePane = new BorderPane();
         ScrollPane DirShowPane = new ScrollPane();
         // 左侧文件主面板 (Top: FileTopPane, Left: fileTreeView, Center: FileDisplayPane)
-        BorderPane FileMainPane = new BorderPane(); // <--- 修改
+        BorderPane FileMainPane = new BorderPane();
 
         // 文件树视图
         TreeView<String> fileTreeView = new TreeView<>();
         fileTreeView.setShowRoot(false);
         fileTreeView.setMinWidth(200);
 
-        TreeItem<String> rootItem = new TreeItem<>("文件列表"); // <--- 修改
+        TreeItem<String> rootItem = new TreeItem<>("文件列表");
         fileTreeView.setRoot(rootItem);
         rootItem.setExpanded(true);
 
         // 文件列表（用数组包装以便在 Lambda 中修改）
-        List<File>[] files = new List[]{Collections.emptyList()}; // <--- 修改变量名
+        List<File>[] files = new List[]{Collections.emptyList()};
 
         Label CurrentDir = new Label("请选择文件夹");
-        Label CurrentFile = new Label("请先选择一个文件夹"); // <--- 修改
+        Label CurrentFile = new Label("请先选择一个文件夹");
 
         // 图片/文件显示区域
         ImageView imageView = new ImageView();
@@ -201,26 +199,22 @@ public class App extends Application {
         imageScrollPane.setFitToHeight(true);
         imageScrollPane.setPrefSize(600, 600);
 
-        // ******************************************************
-        // 【修正 1：删除按钮放回原位】
-        Button DelFile = createDelFileButton(CurrentFile, files, fileTreeView, imageView); // <--- 修改方法名和变量名
 
-        // 创建一个新的 HBox 容器，用于存放 CurrentFile Label 和 DelFile 按钮
-        HBox FileControlPane = new HBox(10, CurrentFile, DelFile); // <--- 修改变量名
-
-        FileDisplayPane.getChildren().addAll(FileControlPane, imageScrollPane); // <--- 修改
-        // ******************************************************
+        Button DelFile = createDelFileButton(CurrentFile, files, fileTreeView, imageView);
 
 
-        FileMainPane.setTop(FileTopPane); // <--- 修改
+        HBox FileControlPane = new HBox(10, CurrentFile, DelFile);
+
+        FileDisplayPane.getChildren().addAll(FileControlPane, imageScrollPane);
+
+        FileMainPane.setTop(FileTopPane);
         FileMainPane.setLeft(fileTreeView);
-        FileMainPane.setCenter(FileDisplayPane); // <--- 修改
+        FileMainPane.setCenter(FileDisplayPane);
 
-        // 【添加撤回按钮】
-        Button undoButton = createUndoButton(CurrentDir, CurrentFile, fileTreeView, files, imageView); // <--- 修改变量名
+        // 添加撤回按钮
+        Button undoButton = createUndoButton(CurrentDir, CurrentFile, fileTreeView, files, imageView);
 
-        // 创建其他按钮
-        Button ChooseDir = createChooseDirButton(stage, CurrentDir, fileTreeView, files, CurrentFile, imageView); // <--- 修改变量名
+        Button ChooseDir = createChooseDirButton(stage, CurrentDir, fileTreeView, files, CurrentFile, imageView);
 
         Label TowardDir = new Label("请选择存储用文件夹");
         DelButton DelDir = new DelButton();
@@ -239,20 +233,15 @@ public class App extends Application {
         DirMainPane.setTop(DirTopPane);
         DirMainPane.setCenter(DirHandlePane);
 
-        // 【更新 FileTopPane 布局以包含撤回按钮】
-        FileTopPane.getChildren().addAll(CurrentDir, ChooseDir, undoButton); // <--- 修改
+        FileTopPane.getChildren().addAll(CurrentDir, ChooseDir, undoButton);
 
-        MainPane.setCenter(FileMainPane); // <--- 修改
+        MainPane.setCenter(FileMainPane);
         MainPane.setRight(DirMainPane);
 
         tab.setContent(MainPane);
         return tab;
     }
 
-    /**
-     * 创建撤销按钮的逻辑。
-     * 【3. 撤回成功后显示信息弹窗】
-     */
     private Button createUndoButton(Label currentDirLabel, Label currentFileLabel, TreeView<String> treeView, List<File>[] files, ImageView imageView) { // <--- 修改变量名
         Button undoButton = new Button("撤销上一步");
         undoButton.setOnAction(e -> {
@@ -283,7 +272,7 @@ public class App extends Application {
 
                     message = "文件 '" + record.fileName + "' 已从分类目录撤回到源文件夹";
 
-                } else if (type == ActionType.DELETE_PIC) { // 保持 ActionType 名称不变，因为它是一个常量
+                } else if (type == ActionType.DELETE_PIC) {
                     // DELETE_PIC 撤销：从 targetPath (回收站中的文件) 移回 originalPath (源目录)
                     Path sourcePath = targetPath.toPath();
                     Path finalPath = originalPath.toPath();
@@ -324,7 +313,6 @@ public class App extends Application {
                     }
                 }
 
-                // 【3. 撤回成功后显示信息弹窗】
                 showInfoAlert("撤销成功", message);
 
             } catch (Exception ex) {
@@ -335,7 +323,6 @@ public class App extends Application {
             updateUndoButtonText(treeView);
         });
 
-        // 初始化按钮文本
         if (actionManager.hasAction()) {
             undoButton.setText("撤销上一步 (剩余 " + actionManager.size() + ")");
         } else {
@@ -344,72 +331,68 @@ public class App extends Application {
         return undoButton;
     }
 
-    /**
-     * 辅助方法：在撤销操作（DELETE_DIR 或 CREATE_DIR）后，找到并刷新分类按钮列表。
-     */
+    // 在撤销操作（DELETE_DIR 或 CREATE_DIR）后，找到并刷新分类按钮列表。
     private void refreshClassifyButtonsFromUndo(TreeView<String> treeView, String towardDirPath, List<File>[] files, Label currentFileLabel, ImageView imageView) { // <--- 修改变量名
 
         // 1. 查找 MainPane (BorderPane)
         BorderPane picMainPane = (BorderPane) treeView.getParent();
         BorderPane mainPane = (BorderPane) picMainPane.getParent();
 
-        // 2. 查找 DirMainPane (它是 MainPane 的 Right 部分)
+        // 2. 查找 DirMainPane (MainPane 的 Right 部分)
         BorderPane dirMainPane = (BorderPane) mainPane.getRight();
 
-        // 3. 查找 DirHandlePane (它是 DirMainPane 的 Center 部分)
+        // 3. 查找 DirHandlePane (DirMainPane 的 Center 部分)
         BorderPane dirHandlePane = (BorderPane) dirMainPane.getCenter();
 
-        // 4. 查找 DirShowPane (ScrollPane) (它是 DirHandlePane 的 Center 部分)
+        // 4. 查找 DirShowPane (ScrollPane) (DirHandlePane 的 Center 部分)
         ScrollPane dirShowPane = (ScrollPane) dirHandlePane.getCenter();
 
         // 5. 查找分类按钮容器 VBox
         VBox container = (VBox) dirShowPane.getContent();
 
-        // 6. 查找 DelButton 所在的 HBox (它是 DirHandlePane 的 Top 部分)
+        // 6. 查找 DelButton 所在的 HBox (DirHandlePane 的 Top 部分)
         HBox handleTop = (HBox) dirHandlePane.getTop();
 
-        // 7. 查找 DelButton (假定它是 handleTop 的第二个元素)
+        // 7. 查找 DelButton
         DelButton delButton = (DelButton) handleTop.getChildren().get(1);
 
-        // 8. 查找 TowardDirLabel (通常在 DirMainPane 的 Top HBox 中)
+        // 8. 查找 TowardDirLabel (在 DirMainPane 的 Top HBox 中)
         HBox dirTopPane = (HBox) dirMainPane.getTop();
         Label towardDirLabel = (Label) dirTopPane.getChildren().get(0);
 
-        // 临时设置 TowardDirLabel 以便 refreshClassifyButtons 使用
+        // 设置 TowardDirLabel 以便 refreshClassifyButtons 使用
         towardDirLabel.setText(towardDirPath);
 
         refreshClassifyButtons(container, towardDirLabel, delButton, files, currentFileLabel, treeView, imageView); // <--- 修改变量名
     }
 
-    /**
-     * 辅助方法：更新撤销按钮文本。
-     * 【2. 在撤回按钮旁显示上条指令的种类】
-     */
+
+     // 更新撤销按钮文本。在撤回按钮旁显示上条指令的种类】
+
     private void updateUndoButtonText(TreeView<String> treeView) {
 
-        // 1. 强制将 treeView.getParent() (FileMainPane) 转换为 BorderPane。
-        BorderPane fileMainPane = (BorderPane) treeView.getParent(); // <--- 修改变量名
+        // 强制将 treeView.getParent() (FileMainPane) 转换为 BorderPane。
+        BorderPane fileMainPane = (BorderPane) treeView.getParent();
 
-        // 2. 调用 BorderPane 的 getTop()，并强制转换为 HBox (FileTopPane)。
-        HBox fileTopPane = (HBox) fileMainPane.getTop(); // <--- 修改变量名
+        // 调用 BorderPane 的 getTop()，并强制转换为 HBox (FileTopPane)。
+        HBox fileTopPane = (HBox) fileMainPane.getTop();
 
-        // 确认撤销按钮是 FileTopPane 的第三个子节点 (CurrentDir, ChooseDir, undoButton)
+
         if (fileTopPane.getChildren().size() > 2 && fileTopPane.getChildren().get(2) instanceof Button) { // <--- 修改变量名
             Button undoButton = (Button) fileTopPane.getChildren().get(2); // <--- 修改变量名
 
             if (actionManager.hasAction()) {
                 String lastActionType = actionManager.peekAction().type.toString();
                 String actionName = "";
-                // 根据 ActionType 映射中文名称
                 switch (lastActionType) {
-                    case "MOVE": actionName = "移动文件"; break; // <--- 修改
-                    case "DELETE_PIC": actionName = "删除文件"; break; // <--- 修改
+                    case "MOVE": actionName = "移动文件"; break;
+                    case "DELETE_PIC": actionName = "删除文件"; break;
                     case "DELETE_DIR": actionName = "删除文件夹"; break;
                     case "CREATE_DIR": actionName = "创建文件夹"; break;
                     default: actionName = "未知操作";
                 }
 
-                // 【显示上条指令的种类】
+                // 显示上条指令的种类
                 undoButton.setText("撤销上一步 [" + actionName + "] (剩余 " + actionManager.size() + ")");
             } else {
                 undoButton.setText("撤销上一步");
@@ -440,37 +423,34 @@ public class App extends Application {
         File[] fileArray = folder.listFiles(f -> f.isFile() && IMG_PATTERN.matcher(f.getName()).matches()); // 保留图像匹配逻辑，因为ImageView依赖
         files[0] = fileArray != null ? Arrays.asList(fileArray) : Collections.emptyList(); // <--- 修改变量名
 
-        if (!files[0].isEmpty()) { // <--- 修改变量名
-            loadFileTree(treeView, folder, files, currentFileLabel, imageView); // <--- 修改变量名
+        if (!files[0].isEmpty()) {
+            loadFileTree(treeView, folder, files, currentFileLabel, imageView);
             treeView.getSelectionModel().select(treeView.getRoot().getChildren().get(0));
-            loadAndDisplayFile(files[0].get(0), imageView, currentFileLabel); // <--- 修改方法名和变量名
+            loadAndDisplayFile(files[0].get(0), imageView, currentFileLabel);
         } else {
-            currentFileLabel.setText("该文件夹中没有找到支持的图像文件"); // <--- 修改描述，突出图像限制
+            currentFileLabel.setText("该文件夹中没有找到支持的图像文件");
             treeView.getRoot().getChildren().clear();
             imageView.setImage(null);
         }
     }
 
-    /**
-     * 【4. 删除操作点击确认后不要接着有弹窗了】
-     */
-    private Button createDelFileButton(Label currentFile, List<File>[] files, TreeView<String> fileTreeView, ImageView imageView){ // <--- 修改方法名和变量名
-        Button DelFile = new Button("删除当前文件"); // <--- 修改按钮文本
+    private Button createDelFileButton(Label currentFile, List<File>[] files, TreeView<String> fileTreeView, ImageView imageView){
+        Button DelFile = new Button("删除当前文件");
         DelFile.setOnAction(event -> {
-            if(currentFile.getText().equals("请选择文件夹") || files[0].isEmpty()){ // <--- 修改变量名
-                showAlert("无法删除", "文件文件夹不可为空"); // <--- 修改
+            if(currentFile.getText().equals("请选择文件夹") || files[0].isEmpty()){
+                showAlert("无法删除", "文件文件夹不可为空");
                 return;
             }
 
-            File fileToMove = getSelectedFile(fileTreeView, files); // <--- 修改方法名和变量名
+            File fileToMove = getSelectedFile(fileTreeView, files);
             if (fileToMove == null) {
-                showAlert("无文件选中", "请先在左侧文件列表中选择一个文件"); // <--- 修改
+                showAlert("无文件选中", "请先在左侧文件列表中选择一个文件");
                 return;
             }
 
             final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("FileStream");
-            alert.setContentText("确认删除当前文件吗？ (将移入回收站)"); // <--- 修改
+            alert.setContentText("确认删除当前文件吗？ (将移入回收站)");
             final Optional<ButtonType> opt = alert.showAndWait();
 
             if (opt.isPresent() && opt.get() == ButtonType.OK) {
@@ -486,14 +466,13 @@ public class App extends Application {
                     updateAfterFileMove(fileToMove, files, currentFile, fileTreeView, imageView); // <--- 修改方法名和变量名
                     updateUndoButtonText(fileTreeView);
 
-                    // 【移除成功信息弹窗】
 
                 } catch (IOException e) {
                     showAlert("删除失败", "无法移动文件到回收站: " + e.getMessage()); // <--- 修改
                 }
             }
         });
-        return DelFile; // <--- 修改变量名
+        return DelFile;
     }
 
     private Button createAddDirButton(VBox container, Label towardDirLabel, DelButton delButton, List<File>[] files, Label currentFileLabel, TreeView<String> fileTreeView) { // <--- 修改变量名
@@ -515,7 +494,7 @@ public class App extends Application {
                 try {
                     Files.createDirectories(newDirPath);
 
-                    // 【记录 CREATE_DIR 操作】
+                    // 记录 CREATE_DIR 操作
                     actionManager.recordAction(ActionType.CREATE_DIR, newDirPath.toFile(), parentFile);
                     updateUndoButtonText(fileTreeView);
 
@@ -558,7 +537,7 @@ public class App extends Application {
             Button btn = new Button(dir.getName());
             btn.setOnAction(e -> {
                 if (delButton.onActive()) {
-                    // 【文件夹删除逻辑】
+                    // 文件夹删除逻辑
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("确认删除");
                     alert.setHeaderText("是否删除 '" + dir.getName() + "' 文件夹？");
@@ -580,10 +559,9 @@ public class App extends Application {
                                 // 记录操作 (DELETE_DIR: 原文件夹路径, 回收站中的文件夹路径)
                                 actionManager.recordAction(ActionType.DELETE_DIR, originalDir, targetRecyclePath.toFile());
 
-                                refreshClassifyButtons(container, towardDirLabel, delButton, files, currentFileLabel, fileTreeView, imageView); // <--- 修改变量名
+                                refreshClassifyButtons(container, towardDirLabel, delButton, files, currentFileLabel, fileTreeView, imageView);
                                 updateUndoButtonText(fileTreeView);
 
-                                // 【移除成功信息弹窗】
 
                             } catch (IOException ex) {
                                 showAlert("删除失败", "无法移动文件夹到回收站: " + ex.getMessage());
@@ -591,10 +569,10 @@ public class App extends Application {
                         }
                     });
                 } else {
-                    // 【文件分类逻辑】
-                    File fileToMove = getSelectedFile(fileTreeView, files); // <--- 修改方法名和变量名
+                    // 文件分类逻辑
+                    File fileToMove = getSelectedFile(fileTreeView, files);
                     if (fileToMove == null) {
-                        showAlert("无文件选中", "请先在左侧文件列表中选择一个文件"); // <--- 修改
+                        showAlert("无文件选中", "请先在左侧文件列表中选择一个文件");
                         return;
                     }
 
@@ -607,13 +585,11 @@ public class App extends Application {
                         // 记录操作 (MOVE: 原文件路径, 目标文件夹路径)
                         actionManager.recordAction(ActionType.MOVE, originalFile, dir);
 
-                        updateAfterFileMove(originalFile, files, currentFileLabel, fileTreeView, imageView); // <--- 修改方法名和变量名
+                        updateAfterFileMove(originalFile, files, currentFileLabel, fileTreeView, imageView);
                         updateUndoButtonText(fileTreeView);
 
-                        // 【5. 添加文件到文件夹操作后不显示弹窗】
-
                     } catch (IOException ex) {
-                        showAlert("移动失败", "无法移动文件: " + ex.getMessage()); // <--- 修改
+                        showAlert("移动失败", "无法移动文件: " + ex.getMessage());
                     }
                 }
             });
@@ -622,7 +598,7 @@ public class App extends Application {
     }
 
     // 获取当前选中的文件
-    private File getSelectedFile(TreeView<String> treeView, List<File>[] files) { // <--- 修改方法名和变量名
+    private File getSelectedFile(TreeView<String> treeView, List<File>[] files) {
         TreeItem<String> selectedItem = treeView.getSelectionModel().getSelectedItem();
         if (selectedItem instanceof FileTreeItem) {
             return ((FileTreeItem) selectedItem).getFile();
@@ -638,10 +614,10 @@ public class App extends Application {
 
     // 移动文件后更新界面
     private void updateAfterFileMove(File movedFile, List<File>[] files, Label currentFileLabel, TreeView<String> treeView, ImageView imageView) { // <--- 修改方法名和变量名
-        if (files[0] != null && !files[0].isEmpty()) { // <--- 修改变量名
-            List<File> newList = new ArrayList<>(files[0]); // <--- 修改变量名
+        if (files[0] != null && !files[0].isEmpty()) {
+            List<File> newList = new ArrayList<>(files[0]);
             newList.remove(movedFile);
-            files[0] = newList; // <--- 修改变量名
+            files[0] = newList;
 
             // 从树中移除
             TreeItem<String> root = treeView.getRoot();
@@ -653,12 +629,12 @@ public class App extends Application {
             });
 
             // 更新显示
-            if (!files[0].isEmpty()) { // <--- 修改变量名
+            if (!files[0].isEmpty()) {
                 if (!root.getChildren().isEmpty()) {
                     treeView.getSelectionModel().select(root.getChildren().get(0));
                 }
             } else {
-                currentFileLabel.setText("没有更多文件了"); // <--- 修改
+                currentFileLabel.setText("没有更多文件了");
                 treeView.getRoot().getChildren().clear();
                 imageView.setImage(null);
             }
@@ -666,10 +642,10 @@ public class App extends Application {
     }
 
     // 加载文件树
-    private void loadFileTree(TreeView<String> treeView, File folder, List<File>[] files, Label currentFileLabel, ImageView imageView) { // <--- 修改方法名和变量名
+    private void loadFileTree(TreeView<String> treeView, File folder, List<File>[] files, Label currentFileLabel, ImageView imageView) {
         TreeItem<String> root = treeView.getRoot();
         if (root == null) {
-            root = new TreeItem<>("文件列表"); // <--- 修改
+            root = new TreeItem<>("文件列表");
             treeView.setRoot(root);
         }
         root.getChildren().clear();
@@ -690,14 +666,14 @@ public class App extends Application {
             if (newVal instanceof FileTreeItem) {
                 FileTreeItem fileItem = (FileTreeItem) newVal;
                 File selectedFile = fileItem.getFile();
-                currentFileLabel.setText("当前文件: " + selectedFile.getName()); // <--- 修改
-                loadAndDisplayFile(selectedFile, imageView, currentFileLabel); // <--- 修改方法名
+                currentFileLabel.setText("当前文件: " + selectedFile.getName());
+                loadAndDisplayFile(selectedFile, imageView, currentFileLabel);
 
-                if (files[0] != null && !files[0].isEmpty()) { // <--- 修改变量名
-                    List<File> list = new ArrayList<>(files[0]); // <--- 修改变量名
+                if (files[0] != null && !files[0].isEmpty()) {
+                    List<File> list = new ArrayList<>(files[0]);
                     list.remove(selectedFile);
                     list.add(0, selectedFile);
-                    files[0] = list; // <--- 修改变量名
+                    files[0] = list;
                 }
             }
         });
@@ -706,22 +682,21 @@ public class App extends Application {
     }
 
     // 异步加载文件/图像
-    private void loadAndDisplayFile(File file, ImageView imageView, Label statusLabel) { // <--- 修改方法名和变量名
+    private void loadAndDisplayFile(File file, ImageView imageView, Label statusLabel) {
         if (file != null && file.exists()) {
-            statusLabel.setText("正在加载文件: " + file.getName()); // <--- 修改
+            statusLabel.setText("正在加载文件: " + file.getName());
             new Thread(() -> {
                 try {
-                    // 必须按图像处理，因为使用了 ImageView
                     Image image = new Image(file.toURI().toString(), true);
                     image.progressProperty().addListener((obs, oldProg, newProg) -> {
                         if (newProg.doubleValue() == 1.0) {
                             Platform.runLater(() -> {
                                 if (!image.isError()) {
                                     imageView.setImage(image);
-                                    statusLabel.setText("当前文件: " + file.getName() + // <--- 修改
+                                    statusLabel.setText("当前文件: " + file.getName() +
                                             " (" + (int) image.getWidth() + "×" + (int) image.getHeight() + ")");
                                 } else {
-                                    statusLabel.setText("文件加载失败 (非图像文件): " + file.getName()); // <--- 修改
+                                    statusLabel.setText("文件加载失败 (非图像文件): " + file.getName()); // 暂时只支持图像
                                     imageView.setImage(null);
                                 }
                             });
@@ -729,13 +704,13 @@ public class App extends Application {
                     });
                 } catch (Exception e) {
                     Platform.runLater(() -> {
-                        statusLabel.setText("文件加载异常: " + e.getMessage()); // <--- 修改
+                        statusLabel.setText("文件加载异常: " + e.getMessage());
                         imageView.setImage(null);
                     });
                 }
             }).start();
         } else {
-            statusLabel.setText("文件不存在或无法访问"); // <--- 修改
+            statusLabel.setText("文件不存在或无法访问");
             imageView.setImage(null);
         }
     }
@@ -765,7 +740,6 @@ public class App extends Application {
         alert.showAndWait();
     }
 
-    // 【新增：显示信息弹窗】
     private void showInfoAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

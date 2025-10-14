@@ -2,10 +2,7 @@ package fun.vignachu;
 
 import java.io.File;
 
-/**
- * 单步操作记录类。
- * 存储执行操作时的状态和路径信息。
- */
+// 存储执行操作时的状态和路径信息。
 public class ActionRecord {
     public final ActionType type;
     public final File originalPath; // 原始路径 (MOVE/DELETE_PIC/DELETE_DIR: 操作前的完整路径；CREATE_DIR: 新建文件夹的完整路径)
