@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- 1. 修改 dividerPositions 为 0.75，让左边主区域更大 -->
+<SplitPane dividerPositions="0.75" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="fun.vignachu.controller.FileOrganizerController"
+           style="-fx-background-color: transparent;">
+
+    <!-- === 左侧：源文件操作与预览 (占据主要空间) === -->
+    <VBox spacing="10" style="-fx-padding: 15;">
+        <!-- 顶部按钮栏 -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button fx:id="btnChooseSource" styleClass="btn-blue" onAction="#onChooseSource"/>
+            <Button fx:id="btnUndo" disable="true" onAction="#onUndo"/>
+            <Label fx:id="lblSourceDir" text="..." styleClass="label-dim"/>
+        </HBox>
+
+        <!-- 中间：文件树(左) + 预览(右) -->
+        <!-- 2. 修改 orientation 为 HORIZONTAL，实现左右并排 -->
+        <SplitPane orientation="HORIZONTAL" dividerPositions="0.25" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+            <!-- 文件列表 -->
+            <TreeView fx:id="fileTreeView" showRoot="false"/>
+
+            <!-- 预览区域 -->
+            <StackPane fx:id="previewContainer" styleClass="preview-box">
+                <Label fx:id="lblPreviewHint" text="No Preview" styleClass="label-dim"/>
+            </StackPane>
+        </SplitPane>
+
+        <!-- 底部操作栏 -->
+        <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: -fx-bg-secondary; -fx-background-radius: 5;">
+            <Button fx:id="btnDelFile" styleClass="btn-danger" onAction="#onDeleteFile"/>
+        </HBox>
+    </VBox>
+
+    <!-- === 右侧：目标文件夹选择 (占据小部分空间) === -->
+    <VBox spacing="10" style="-fx-padding: 15;">
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button fx:id="btnChooseTarget" styleClass="btn-blue" onAction="#onChooseTarget"/>
+            <Label fx:id="lblTargetDir" text="..." styleClass="label-dim"/>
+        </HBox>
+
+        <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: -fx-bg-secondary; -fx-background-radius: 5;">
+            <Button fx:id="btnAddDir" styleClass="btn-primary" disable="true" onAction="#onCreateDir"/>
+            <!-- 模式切换按钮 -->
+            <ToggleButton fx:id="tglMode" styleClass="btn-purple"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox fx:id="classifyContainer" spacing="8" style="-fx-padding: 10;"/>
+        </ScrollPane>
+    </VBox>
+
+</SplitPane>

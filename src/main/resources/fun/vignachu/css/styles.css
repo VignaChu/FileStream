@@ -1,0 +1,231 @@
+/* ==================================================================================
+   1. 全局变量定义
+   -fx-custom-border: 自定义边框变量，防止与 -fx-border-color 同名死循环
+   -fx-bg-midi: MIDI 功能栏背景色
+   ================================================================================== */
+
+/* 默认暗色模式 (兜底) */
+.root {
+    -fx-bg-primary: #2b2b2b;    /* 窗口背景 */
+    -fx-bg-secondary: #333333;  /* 面板/侧栏背景 */
+    -fx-bg-control: #444444;    /* 按钮/输入框背景 */
+    -fx-text-primary: white;    /* 主文字 */
+    -fx-text-secondary: #aaaaaa;/* 次文字 */
+    -fx-custom-border: #555555; /* 边框颜色 */
+    -fx-bg-midi: #2b2b2b;       /* MIDI功能栏背景 (暗色模式下与背景融合) */
+
+    /* 基础应用 */
+    -fx-background-color: -fx-bg-primary;
+    -fx-font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+}
+
+/* 亮色模式覆盖 */
+.theme-light {
+    -fx-bg-primary: #f4f4f4;
+    -fx-bg-secondary: #ffffff;
+    -fx-bg-control: #e0e0e0;
+    -fx-text-primary: #333333;
+    -fx-text-secondary: #666666;
+    -fx-custom-border: #cccccc;
+    /* 【新需求】浅色模式下，MIDI栏颜色加深，区别于白色背景 */
+    -fx-bg-midi: #d0d0d0;
+}
+
+/* 暗色模式覆盖 (保留作为切换靶子) */
+.theme-dark {
+    -fx-bg-primary: #2b2b2b;
+    -fx-bg-secondary: #333333;
+    -fx-bg-control: #444444;
+    -fx-text-primary: white;
+    -fx-text-secondary: #aaaaaa;
+    -fx-custom-border: #555555;
+    -fx-bg-midi: #2b2b2b;
+}
+
+/* ==================================================================================
+   2. 文本样式
+   ================================================================================== */
+.label {
+    -fx-text-fill: -fx-text-primary;
+}
+
+.label-dim {
+    -fx-text-fill: -fx-text-secondary;
+}
+
+/* ==================================================================================
+   3. 按钮与交互控件
+   ================================================================================== */
+.button, .menu-button, .toggle-button {
+    -fx-background-color: -fx-bg-control;
+    -fx-text-fill: -fx-text-primary;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-padding: 6 12;
+    /* 使用自定义变量，防止 StackOverflowError */
+    -fx-border-color: -fx-custom-border;
+    -fx-border-width: 1;
+}
+
+.button:hover, .menu-button:hover, .toggle-button:hover {
+    -fx-brightness: 1.1;
+}
+
+.button:pressed, .menu-button:pressed, .toggle-button:selected {
+    -fx-background-color: derive(-fx-bg-control, -20%);
+}
+
+/* 修复 MenuButton 内部文字颜色 */
+.menu-button .label {
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* 修复 MenuButton 箭头颜色 */
+.menu-button .arrow {
+    -fx-background-color: -fx-text-primary;
+}
+
+/* ==================================================================================
+   4. 下拉菜单 (ContextMenu) 修复
+   解决语言选项在深色模式下看不清的问题
+   ================================================================================== */
+.context-menu {
+    -fx-background-color: -fx-bg-secondary;
+    -fx-border-color: -fx-custom-border;
+    -fx-border-width: 1;
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+}
+
+.menu-item .label {
+    -fx-text-fill: -fx-text-primary;
+}
+
+.menu-item:focused {
+    -fx-background-color: -fx-bg-control;
+}
+
+/* ==================================================================================
+   5. 特殊按钮颜色
+   ================================================================================== */
+.btn-primary { -fx-background-color: #4CAF50; -fx-text-fill: white; }
+.btn-blue    { -fx-background-color: #2196F3; -fx-text-fill: white; }
+.btn-danger  { -fx-background-color: #F44336; -fx-text-fill: white; }
+.btn-purple  { -fx-background-color: #6a0dad; -fx-text-fill: white; }
+
+/* 鼠标悬停时保持白色文字 */
+.btn-primary:hover, .btn-blue:hover, .btn-danger:hover, .btn-purple:hover {
+    -fx-text-fill: white;
+}
+
+/* ==================================================================================
+   6. 组件样式
+   ================================================================================== */
+.preview-box {
+    -fx-background-color: -fx-bg-secondary;
+    -fx-border-color: -fx-custom-border;
+    -fx-border-width: 1;
+}
+
+.separator:vertical .line {
+    -fx-border-color: -fx-custom-border;
+    -fx-border-width: 0 0 0 1;
+}
+
+.scroll-pane, .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ==================================================================================
+   7. MIDI 界面专用
+   ================================================================================== */
+.midi-panel {
+    /* 使用定义好的 midi 背景变量 */
+    -fx-background-color: -fx-bg-midi;
+    -fx-padding: 10;
+}
+
+/* === 文本编辑器模式样式 === */
+.code-editor {
+    -fx-font-family: "Consolas", "Menlo", "Monospace"; /* 等宽字体 */
+    -fx-font-size: 14px;
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* 修复 TextArea 内部结构颜色，使其融入背景 */
+.code-editor .content {
+    -fx-background-color: -fx-bg-primary;
+}
+
+.code-editor:focused .content {
+    -fx-background-color: -fx-bg-primary;
+}
+
+/* === 表格样式微调 === */
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -fx-bg-secondary;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: -fx-custom-border;
+    -fx-border-width: 0 1 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* 单元格样式 */
+.table-row-cell {
+    -fx-background-color: -fx-bg-primary;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: derive(-fx-bg-primary, 5%); /* 斑马纹 */
+}
+
+.table-view .table-cell {
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* 选中行 */
+.table-view:focused .table-row-cell:selected,
+.table-view .table-row-cell:selected {
+    -fx-background-color: #2196F3; /* 选中变蓝 */
+}
+.table-view:focused .table-row-cell:selected .table-cell,
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+}
+
+.file-item-btn {
+    -fx-background-color: -fx-bg-control;
+    -fx-text-fill: -fx-text-primary;
+    -fx-border-color: -fx-custom-border;
+    -fx-border-width: 1;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-padding: 8 15;
+    -fx-min-width: 100px;
+    -fx-alignment: center-left;
+}
+
+/* 文件按钮 (选中/高亮) */
+.file-item-btn:selected {
+    -fx-background-color: #2196F3; /* 选中变蓝 */
+    -fx-text-fill: white;
+    -fx-border-color: #1976D2;
+}
+
+.file-item-btn:hover {
+    -fx-brightness: 1.1;
+}

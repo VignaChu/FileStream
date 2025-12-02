@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<SplitPane dividerPositions="0.3" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="fun.vignachu.controller.ExtensionController"
+           style="-fx-background-color: transparent;">
+
+    <!-- === 左侧：文件列表区 === -->
+    <VBox spacing="10" style="-fx-padding: 10;">
+
+        <!-- 顶部：文件夹选择 -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <!-- 【修改】添加 fx:id -->
+            <Button fx:id="btnChooseDir" text="Select Folder" styleClass="btn-blue" onAction="#onChooseDir"/>
+            <Label fx:id="lblCurrentDir" text="..." styleClass="label-dim" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox fx:id="fileListContainer" spacing="2" style="-fx-padding: 5;"/>
+        </ScrollPane>
+
+        <CheckBox fx:id="chkSelectAll" text="Select All" styleClass="label"/>
+    </VBox>
+
+    <!-- === 右侧：操作控制区 === -->
+    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30;">
+
+        <!-- 【修改】添加 fx:id -->
+        <Label fx:id="lblTitle" text="Batch Ext Changer" style="-fx-font-size: 18px; -fx-font-weight: bold;" styleClass="label"/>
+
+        <VBox spacing="10" maxWidth="300" style="-fx-padding: 20; -fx-background-color: -fx-bg-secondary; -fx-background-radius: 8;">
+            <Label fx:id="lblInputTip" text="New Ext:" styleClass="label"/>
+            <TextField fx:id="tfExtension" promptText="e.g. png" style="-fx-font-size: 14px;"/>
+            <Separator/>
+            <Button fx:id="btnApply" text="Apply" styleClass="btn-primary" maxWidth="Infinity" onAction="#onApply"/>
+        </VBox>
+
+        <!-- 【修改】添加 fx:id -->
+        <Label fx:id="lblFooterTip" text="Tip..." styleClass="label-dim" wrapText="true" textAlignment="CENTER"/>
+
+    </VBox>
+
+</SplitPane>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- 根容器 -->
+<VBox fx:id="rootContainer"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fun.vignachu.controller.MainController"
+      prefHeight="800.0" prefWidth="1280.0">
+
+    <!-- 1. 顶部全局工具栏 -->
+    <HBox alignment="CENTER_LEFT" spacing="15"
+          style="-fx-padding: 10 20; -fx-background-color: -fx-bg-secondary; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+
+        <Label fx:id="lblTitle" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- 语言菜单 -->
+        <MenuButton fx:id="btnLang" text="Language">
+            <items>
+                <MenuItem text="简体中文" onAction="#onLangZh"/>
+                <MenuItem text="English" onAction="#onLangEn"/>
+            </items>
+        </MenuButton>
+
+        <!-- 主题按钮 -->
+        <Button fx:id="btnTheme" onAction="#onToggleTheme"/>
+    </HBox>
+
+    <!-- 2. 中间标签页容器 -->
+    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE"
+             style="-fx-background-color: -fx-bg-primary;">
+
+        <!-- 标签页 1: 文件分流 -->
+        <Tab fx:id="tabOrganizer">
+            <content>
+                <fx:include source="file-organizer.fxml"/>
+            </content>
+        </Tab>
+
+        <!-- 标签页 2: MIDI 可视化 -->
+        <Tab fx:id="tabMidi">
+            <content>
+                <fx:include fx:id="midiView" source="midi-view.fxml"/>
+            </content>
+        </Tab>
+
+        <Tab fx:id="tabExtension" text="后缀修改">
+            <content>
+                <fx:include source="extension-view.fxml"/>
+            </content>
+        </Tab>
+
+        <!-- 标签页 4: 关于 -->
+        <Tab fx:id="tabAbout">
+            <content>
+                <StackPane>
+                    <VBox alignment="CENTER" spacing="10">
+                        <!-- 这里的 fx:id 对应 MainController 里的字段 -->
+                        <Label fx:id="lblAboutTitle" styleClass="label-dim" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Label fx:id="lblAboutDesc" styleClass="label-dim" style="-fx-font-size: 16px;"/>
+                    </VBox>
+                </StackPane>
+            </content>
+        </Tab>
+
+    </TabPane>
+</VBox>

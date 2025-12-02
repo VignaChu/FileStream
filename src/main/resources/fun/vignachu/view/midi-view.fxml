@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fun.vignachu.controller.MidiController">
+
+    <top>
+        <VBox spacing="10" style="-fx-padding: 15;">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Button fx:id="btnMidi" text="1. MIDI" styleClass="btn-blue" onAction="#onLoadMidi"/>
+                <Label fx:id="lblMidiName" text="..." styleClass="label-dim"/>
+
+                <Separator orientation="VERTICAL"/>
+
+                <Button fx:id="btnSf2" text="2. SF2" styleClass="btn-blue" onAction="#onLoadSf2"/>
+                <!-- 【新增】重置按钮 -->
+                <Button fx:id="btnClearSf2" text="R" styleClass="btn-danger" onAction="#onClearSf2"/>
+
+                <Label fx:id="lblSf2Name" text="..." styleClass="label-dim"/>
+            </HBox>
+
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Button fx:id="btnBg" text="3. BG" styleClass="btn-blue" onAction="#onLoadBg"/>
+                <Button fx:id="btnClearBg" text="X" styleClass="btn-danger" onAction="#onClearBg"/>
+
+                <Separator orientation="VERTICAL"/>
+
+                <Label fx:id="lblOpacity" text="Opacity:" styleClass="label"/>
+                <Slider fx:id="sliderOpacity" min="0.1" max="1.0" value="0.8"/>
+
+                <Label fx:id="lblSync" text="Sync(ms):" styleClass="label"/>
+                <Slider fx:id="sliderSync" min="0" max="2000" value="500" prefWidth="200"/>
+                <Label fx:id="lblSyncValue" text="500 ms" styleClass="label"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <Pane fx:id="canvasContainer" style="-fx-background-color: black;">
+            <Canvas fx:id="canvas"/>
+        </Pane>
+    </center>
+
+    <bottom>
+        <HBox spacing="15" alignment="CENTER" style="-fx-padding: 15;">
+            <Button fx:id="btnPlay" text="▶" styleClass="btn-primary" onAction="#onPlay"/>
+            <Button fx:id="btnPause" text="⏸" styleClass="btn-purple" onAction="#onPause"/>
+            <Button fx:id="btnStop" text="⏹" styleClass="btn-danger" onAction="#onStop"/>
+
+            <Slider fx:id="sliderProgress" HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="lblTime" text="00:00" styleClass="label"/>
+            <Label fx:id="lblVol" text="Vol" styleClass="label"/>
+            <Slider fx:id="sliderVolume" min="0" max="127" value="100"/>
+        </HBox>
+    </bottom>
+</BorderPane>
